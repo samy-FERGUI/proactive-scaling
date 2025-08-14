@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  labels:
+    name: prometheus-config
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 5s
+      scrape_timeout: 4s      
+      evaluation_interval: 5s
+
+    scrape_configs:
+      # 1) Scraper Prometheus lui-même
+      - job_name: 'prometheus'
+        static_configs:
+          - targets: ['localhost:9090']
+
+      # 2) Scraper Nginx exporter
+      - job_name: 'nginx'
+        static_configs:
+          - targets: ['nginx-exporter:9113']
+      #.
+      #.
+
+      # 3) Scraper kube-state-metrics via Kubernetes SD
+      - job_name: 'kube-state-metrics'
+        kubernetes_sd_configs:
+          - role: endpoints
+            namespaces:
+              names:
+                - kube-system
+        relabel_configs:
+          # Ne garder que les endpoints du Service kube-state-metrics
+          - source_labels: [__meta_kubernetes_service_name]
+            action: keep
+            regex: kube-state-metrics
+          # Prendre l'IP:port et l'utiliser tel quel
+          - source_labels: [__address__]
+            target_label: __address__
+            replacement: $1
+            action: replace
