@@ -6,10 +6,10 @@ import time
 # ===============================
 # Configuration
 # ===============================
-PROMETHEUS_URL = "http://127.0.0.1:50718/api/v1/query" #a modifier selon l'url vers prometheus
-QUERY = 'rate(nginx_http_requests_total[1m])'
+PROMETHEUS_URL = "http://127.0.0.1:56698/api/v1/query" #a modifier selon l'url vers prometheus
+QUERY = 'irate(nginx_http_requests_total[1m])'
 
-CHARGE_UNITAIRE = 500   # nombre de requêtes/min qu'un pod peut gérer sans saturation
+CHARGE_UNITAIRE = 2000   # nombre de requêtes/min qu'un pod peut gérer sans saturation
 MIN_REPLICAS = 1
 MAX_REPLICAS = 10
 INTERVAL = 5           # secondes entre deux vérifications
